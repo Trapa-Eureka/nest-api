@@ -1,38 +1,36 @@
 import { Controller, Get, Param, Post, Delete, Patch, Body, Query } from '@nestjs/common';
+import { MoviesService } from './movies.service';
+import { Movie } from './entities/movie.entity';
 
 @Controller('movies')
 export class MoviesController {
-    @Get()
-    getAll() {
-        return 'This will return all movies';
-    }
+  constructor(private readonly moviesService: MoviesService) {}
 
-    @Get("search")
-    search(@Query('year') searchingYear: string) {
-        return `We are searching for a movie made after: ${searchingYear}`;
-    }
+  @Get()
+  getAll(): Movie[] {
+    return this.moviesService.getAll();
+  }
 
-    @Get(':id')
-    getOne(@Param('id') movieId: String) {  // id라는 Param을 id라는 args에 저장.
-        return `This will return one movie with the id: ${movieId}`;
-    }
+  @Get(':id')
+  getOne(@Param('id') movieId: string): Movie {
+    return this.moviesService.getOne(movieId);
+  }
 
-    @Post()
-    create(@Body() movieData) {
-        return movieData;
-    }
+  @Post()
+  create(@Body() movieData) {
+    return this.moviesService.create(movieData);
+  }
 
-    @Delete(':id')
-    remove(@Param('id') movieId: String) {
-        return `This will delete a movie with the id: ${movieId}`;
-    }
+  @Delete(':id')
+  remove(@Param('id') movieId: string) {
+    return this.moviesService.deleteOne(movieId);
+  }
 
-    @Patch(':id')
-    patch(@Param('id') movieId: string, @Body() updateData) {
-        return {
-            // 업데이트할 movie의 id와 보낼 데이터의 obj를 리턴
-            updatedMovie: movieId,
-            ...updateData,
-        };
-    }
+  @Patch(':id')
+  patch(@Param('id') movieId: string, @Body() updateData) {
+    return {
+      updatedMovie: movieId,
+      ...updateData,
+    };
+  }
 }
